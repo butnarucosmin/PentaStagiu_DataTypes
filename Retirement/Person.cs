@@ -78,8 +78,11 @@ namespace Retirement
             Console.WriteLine("Year:");
             if (int.TryParse(Console.ReadLine(), out int year))
             {
-                dob = new DateTime(year, month, day);
-                age = Convert.ToInt32(present.Subtract(dob).TotalDays / 365.2422);
+                dob = new DateTime(year, month, day);                
+                age = present.Year - dob.Year;
+
+                if (present.Month < dob.Month || (present.Month == dob.Month && present.Day < dob.Day))
+                    age--;
                 Console.WriteLine($"You are {age} years old.");
             }
             else
@@ -89,15 +92,15 @@ namespace Retirement
             }
 
             //Retirement check
-            if ((age >= 65) || (age >= 63))
+            if ((gender == 1) && (age >= 65) || (gender == 0) && (age >= 63))
             {
                 Console.WriteLine("You are retired.");
             }
-            else if (gender == 0)
+            else if ((gender == 0) && (age < 63))
             {
                 Console.WriteLine("You will retire at age 63");
             }
-            else if (gender == 1)
+            else if ((gender == 1) && (age <65))
             {
                 Console.WriteLine("You will retire at age 65");
             }
