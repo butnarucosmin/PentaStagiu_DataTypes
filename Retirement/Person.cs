@@ -6,7 +6,8 @@ namespace Retirement
     {
         private
             int age;
-            int? gender = null;
+        Gender gender;
+
         public enum Gender
         {
             Female,
@@ -14,17 +15,17 @@ namespace Retirement
         }
         public void RetirementCheck()
         {
-            //Gender Determination
+        //Gender Determination
         START:
             Console.WriteLine("Please enter your gender(f for female / m for male)");
             var input = Console.ReadLine();
             if (input == "m")
             {
-                gender = (int?) Gender.Male;
+                gender = Gender.Male;
             }
             else if (input == "f")
             {
-                gender = (int?) Gender.Female;
+                gender = Gender.Female;
             }
             else
             {
@@ -33,14 +34,14 @@ namespace Retirement
             }
 
             // Age Determination
-            DateTime dob = new DateTime();
+            DateTime dateOfBirth = new DateTime();
             DateTime present = DateTime.Now;
             Console.WriteLine("Please enter your date of birth");
         DAY:
             Console.WriteLine("Day:");
             if (int.TryParse(Console.ReadLine(), out int day))
             {
-                if(day <= 31 && day >= 1)
+                if (day <= 31 && day >= 1)
                 {
                     goto MONTH;
                 }
@@ -56,7 +57,7 @@ namespace Retirement
                 goto DAY;
             }
         MONTH:
-            Console.WriteLine("Month:");            
+            Console.WriteLine("Month:");
             if (int.TryParse(Console.ReadLine(), out int month))
             {
                 if (month <= 12 && month >= 1)
@@ -78,10 +79,10 @@ namespace Retirement
             Console.WriteLine("Year:");
             if (int.TryParse(Console.ReadLine(), out int year))
             {
-                dob = new DateTime(year, month, day);                
-                age = present.Year - dob.Year;
+                dateOfBirth = new DateTime(year, month, day);
+                age = present.Year - dateOfBirth.Year;
 
-                if (present.Month < dob.Month || (present.Month == dob.Month && present.Day < dob.Day))
+                if (present.Month < dateOfBirth.Month || (present.Month == dateOfBirth.Month && present.Day < dateOfBirth.Day))
                     age--;
                 Console.WriteLine($"You are {age} years old.");
             }
@@ -92,17 +93,20 @@ namespace Retirement
             }
 
             //Retirement check
-            if ((gender == 1) && (age >= 65) || (gender == 0) && (age >= 63))
+            const int maleRetirementAge = 65;
+            const int femaleRetirementAge = 63;
+
+            if ((gender == Gender.Male) && (age >= maleRetirementAge) || (gender == Gender.Female) && (age >= femaleRetirementAge))
             {
                 Console.WriteLine("You are retired.");
             }
-            else if ((gender == 0) && (age < 63))
+            else if ((gender == Gender.Female) && (age < femaleRetirementAge))
             {
-                Console.WriteLine("You will retire at age 63");
+                Console.WriteLine($"You will retire at age {femaleRetirementAge}");
             }
-            else if ((gender == 1) && (age <65))
+            else if ((gender == Gender.Male) && (age < maleRetirementAge))
             {
-                Console.WriteLine("You will retire at age 65");
+                Console.WriteLine($"You will retire at age {maleRetirementAge}");
             }
         }
     }
