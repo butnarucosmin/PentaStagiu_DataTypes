@@ -1,12 +1,12 @@
 ﻿using System;
+using System.Globalization;
 
 namespace Retirement
 {
     public class Person
     {
-        private
-            int age;
-        Gender gender;
+        private int age;
+        private Gender gender;
 
         public enum Gender
         {
@@ -15,82 +15,65 @@ namespace Retirement
         }
         public void RetirementCheck()
         {
-        //Gender Determination
-        START:
-            Console.WriteLine("Please enter your gender(f for female / m for male)");
-            var input = Console.ReadLine();
-            if (input == "m")
+            //Gender Determination
+            do
             {
-                gender = Gender.Male;
-            }
-            else if (input == "f")
-            {
-                gender = Gender.Female;
-            }
-            else
-            {
-                Console.WriteLine("Please try again");
-                goto START;
-            }
+                Console.WriteLine("Please enter your gender(f for female / m for male)");
+                var input = Console.ReadKey();
+
+                if (input.Key == ConsoleKey.M)
+                {
+                    gender = Gender.Male;
+                    break;
+                }
+                else if (input.Key == ConsoleKey.F)
+                {
+                    gender = Gender.Female;
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("\nPlease try again");
+                    continue;
+                }
+
+            } while (true);
 
             // Age Determination
-            DateTime dateOfBirth = new DateTime();
-            DateTime present = DateTime.Now;
-            Console.WriteLine("Please enter your date of birth");
-        DAY:
-            Console.WriteLine("Day:");
-            if (int.TryParse(Console.ReadLine(), out int day))
-            {
-                if (day <= 31 && day >= 1)
-                {
-                    goto MONTH;
-                }
-                else
-                {
-                    Console.WriteLine("Please enter a number between 1 and 31");
-                    goto DAY;
-                }
-            }
-            else
-            {
-                Console.WriteLine("Please enter a number between 1 and 31");
-                goto DAY;
-            }
-        MONTH:
-            Console.WriteLine("Month:");
-            if (int.TryParse(Console.ReadLine(), out int month))
-            {
-                if (month <= 12 && month >= 1)
-                {
-                    goto YEAR;
-                }
-                else
-                {
-                    Console.WriteLine("Please enter a number between 1 and 12");
-                    goto MONTH;
-                }
-            }
-            else
-            {
-                Console.WriteLine("Please enter a number between 1 and 12");
-                goto MONTH;
-            }
-        YEAR:
-            Console.WriteLine("Year:");
-            if (int.TryParse(Console.ReadLine(), out int year))
-            {
-                dateOfBirth = new DateTime(year, month, day);
-                age = present.Year - dateOfBirth.Year;
+            DateTime birthDay = new DateTime();
+            CultureInfo provider = CultureInfo.InvariantCulture;
 
-                if (present.Month < dateOfBirth.Month || (present.Month == dateOfBirth.Month && present.Day < dateOfBirth.Day))
-                    age--;
-                Console.WriteLine($"You are {age} years old.");
-            }
-            else
+            do
             {
-                Console.WriteLine("Please enter a number");
-                goto YEAR;
-            }
+                Console.WriteLine("\nEnter your Birthdate(DD/MM/YYYY)");
+                string value = Console.ReadLine();
+                string format = "dd/MM/yyyy";               
+
+                try
+                {
+                    birthDay = DateTime.ParseExact(value, format, provider);
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("{0} is not in the correct format.", value);
+                    continue;
+                }
+
+                if (birthDay > DateTime.Today)
+                {
+                    Console.WriteLine("Invalid option. Try again!");
+                    continue;
+                }
+                else
+                {
+                    age = DateTime.Now.Year - birthDay.Year;
+
+                    if ((birthDay.Month > DateTime.Now.Month) || (birthDay.Month == DateTime.Now.Month && birthDay.Day > DateTime.Now.Day))
+                        age--;
+
+                    break;
+                }
+            } while (true);
 
             //Retirement check
             const int maleRetirementAge = 65;
@@ -102,10 +85,12 @@ namespace Retirement
             }
             else if ((gender == Gender.Female) && (age < femaleRetirementAge))
             {
+                Console.WriteLine($"You are {age} years old.");
                 Console.WriteLine($"You will retire at age {femaleRetirementAge}");
             }
             else if ((gender == Gender.Male) && (age < maleRetirementAge))
             {
+                Console.WriteLine($"You are {age} years old.");
                 Console.WriteLine($"You will retire at age {maleRetirementAge}");
             }
         }
